@@ -1,0 +1,37 @@
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import java.util.*;
+
+@RestController
+@RequestMapping("/session")
+public class SessionController {
+
+    private final Map<String, String> sessionStore = new HashMap<>();
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    // Avanoda API URL (Update with actual URL)
+    private final String teammateApiUrl = "http://teammate-api.com/getInputs";
+
+    @GetMapping("/create")
+    public Map<String, String> createSessionFromAPI() {
+        // 1. API Call to get input values
+        Map<String, String> input = restTemplate.getForObject(teammateApiUrl, Map.class);
+        
+        // 2. Check API response
+        if (input == null || !input.containsKey("neId")) {
+            return Map.of("message", "Failed to fetch input values");
+        }
+
+        // 3. Extract Ne ID from API response
+        String neId = input.get("neId");
+
+        // 4. Check if session already exists, else create a new one
+        String sessionId = sessionStore.computeIfAbsent(neId, k -> UUID.randomUUID().toString());
+
+        // 5. Store Ne ID and Session ID in sessionStore
+        sessionStore.put(neId, sessionId);
+
+        // 6. Return success response (without showing sessionId)
+        return Map.of("message", "Logged in successful");
+    }
+}
