@@ -1,0 +1,22 @@
+import org.springframework.web.bind.annotation.*;
+import java.util.*;
+
+@RestController
+@RequestMapping("/session")
+public class SessionController {
+
+    private final Map<String, String> sessionStore = new HashMap<>();
+
+    @PostMapping("/create")
+    public Map<String, String> createSession(@RequestBody Map<String, String> input) {
+        // Dummy Data for Testing
+        String neId = input.getOrDefault("neId", "123"); // Default Value
+
+        // Already session ID irundha, adhe thaan use pannu
+        String sessionId = sessionStore.getOrDefault(neId, UUID.randomUUID().toString());
+        sessionStore.putIfAbsent(neId, sessionId); // Store only if new
+
+        // Response
+        return Map.of("message", "Logged in successful");
+    }
+}
