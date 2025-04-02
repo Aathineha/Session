@@ -1,0 +1,21 @@
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/sbi")
+public class SbiController {
+
+    @Autowired
+    private DeviceCredentialService deviceCredentialService;
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginDevices() {
+        boolean success = deviceCredentialService.loginAllDevices();
+        if (success) {
+            return ResponseEntity.ok("Login Successful");
+        } else {
+            return ResponseEntity.status(500).body("Login Failed - Unable to fetch data");
+        }
+    }
+}
