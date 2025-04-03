@@ -1,0 +1,10 @@
+@Service
+public class SessionService {
+
+    @Autowired
+    private SessionRepository sessionRepository;
+
+    public void storeSession(String sessionId, String neId) {
+        sessionRepository.save(new SessionDTO(sessionId, neId));
+    }
+}
