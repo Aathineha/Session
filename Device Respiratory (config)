@@ -1,0 +1,4 @@
+@Repository
+public interface DeviceRepository extends CassandraRepository<DeviceDTO, String> {
+    DeviceDTO findByNeId(String neId);
+}
