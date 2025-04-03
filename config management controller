@@ -1,0 +1,42 @@
+@RestController
+@RequestMapping("/config-management")
+public class ConfigManagementController {
+
+    @Autowired
+    private DeviceService deviceService; // Service to fetch data from Cassandra
+
+    @Autowired
+    private RestTemplate restTemplate; // Used to call SBI API
+
+    @Value("${sbi.api.url}") // Fetch URL from application properties
+    private String sbiApiUrl;
+
+    @PostMapping("/validate")
+    public ResponseEntity<String> validateNeId(@RequestBody Map<String, String> request) {
+        String neId = request.get("neId");
+
+        // Validate and fetch device details from Cassandra
+        DeviceDTO device = deviceService.getDeviceByNeId(neId);
+        if (device == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ne Id not found");
+        }
+
+        // Prepare request for SBI API
+        Map<String, String> sbiRequest = Map.of(
+            "username", device.getUsername(),
+            "password", device.getPassword(),
+            "ip", device.getIp(),
+            "neId", neId
+        );
+
+        // Call SBI API dynamically using configured URL
+        ResponseEntity<String> response = restTemplate.postForEntity(sbiApiUrl, sbiRequest, String.class);
+
+        // Handle SBI Response
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return ResponseEntity.ok("Session creation successful with SBI");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Session creation failed with SBI");
+        }
+    }
+}
