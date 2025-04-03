@@ -1,0 +1,10 @@
+@Service
+public class DeviceService {
+
+    @Autowired
+    private DeviceRepository deviceRepository;
+
+    public DeviceDTO getDeviceByNeId(String neId) {
+        return deviceRepository.findByNeId(neId);
+    }
+}
