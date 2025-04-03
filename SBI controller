@@ -1,0 +1,23 @@
+@RestController
+@RequestMapping("/sbi")
+public class SbiController {
+
+    @Autowired
+    private SessionService sessionService; // Service to store session data in Cassandra
+
+    @PostMapping("/create-session")
+    public ResponseEntity<String> createSession(@RequestBody Map<String, String> request) {
+        String neId = request.get("neId");
+
+        // Generate unique session ID
+        String sessionId = UUID.randomUUID().toString();
+
+        // Store session in Cassandra
+        sessionService.storeSession(sessionId, neId);
+
+        // Log success
+        System.out.println("Login successful: Session ID = " + sessionId + ", Ne Id = " + neId);
+
+        return ResponseEntity.ok("Login successful");
+    }
+}
