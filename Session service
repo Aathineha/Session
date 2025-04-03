@@ -2,16 +2,18 @@ package com.example.sbi.service;
 
 import org.springframework.stereotype.Service;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 @Service
 public class SessionService {
-    private final ConcurrentHashMap<String, String> sessionStore = new ConcurrentHashMap<>();
+
+    private final Map<String, String> sessionStore = new ConcurrentHashMap<>();
 
     public void storeSession(String neId, String sessionId) {
         sessionStore.put(neId, sessionId);
     }
 
-    public String getSession(String neId) {
-        return sessionStore.get(neId);
+    public Map<String, String> getSessionStore() {
+        return sessionStore;
     }
 }
