@@ -3,17 +3,19 @@ package com.example.sbi.controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.sbi.service.DeviceCredentialService;
+import com.example.sbi.model.DeviceDTO;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sbi")
-public class DeviceController {
+public class DeviceCredentialController {
 
     @Autowired
     private DeviceCredentialService deviceCredentialService;
 
-    @PostMapping("/loginAll")
-    public Map<String, String> loginAllDevices() {
-        return deviceCredentialService.loginAllDevices();
+    @PostMapping("/devices")
+    public String receiveDevices(@RequestBody DeviceDTO[] devices) {
+        Map<String, String> sessionMap = deviceCredentialService.processDevices(devices);
+        return "Login Successful";
     }
 }
