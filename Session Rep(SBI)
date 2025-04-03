@@ -1,0 +1,3 @@
+@Repository
+public interface SessionRepository extends CassandraRepository<SessionDTO, String> {
+}
