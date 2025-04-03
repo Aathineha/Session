@@ -1,14 +1,17 @@
+package com.example.sbi.service;
+
 import org.springframework.stereotype.Service;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.UUID;
 
 @Service
 public class SessionService {
-
     private final ConcurrentHashMap<String, String> sessionStore = new ConcurrentHashMap<>();
 
-    public boolean login(String neId) {
-        sessionStore.computeIfAbsent(neId, key -> UUID.randomUUID().toString());
-        return true; // Session created or already exists
+    public void storeSession(String neId, String sessionId) {
+        sessionStore.put(neId, sessionId);
+    }
+
+    public String getSession(String neId) {
+        return sessionStore.get(neId);
     }
 }
