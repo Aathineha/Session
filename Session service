@@ -1,4 +1,4 @@
-package com.example.sbi.service;
+package com.example.session1.SessionService;
 
 import org.springframework.stereotype.Service;
 import java.util.concurrent.ConcurrentHashMap;
@@ -6,13 +6,19 @@ import java.util.Map;
 
 @Service
 public class SessionService {
-
     private final Map<String, String> sessionStore = new ConcurrentHashMap<>();
 
+    // Store session ID for a given neId and IP address
     public void storeSession(String neId, String sessionId) {
         sessionStore.put(neId, sessionId);
     }
 
+    // Get session ID for a given neId
+    public String getSession(String neId) {
+        return sessionStore.get(neId); // Returns session ID if exists, otherwise null
+    }
+
+    // Return the whole session store (If needed for debugging)
     public Map<String, String> getSessionStore() {
         return sessionStore;
     }
