@@ -1,9 +1,13 @@
 @PostMapping("/logout")
 public ResponseEntity<String> logout(@RequestBody LogoutRequest request) {
-    String sessionId = sessionService.getSession(request.getNeId());
+    String neId = request.getNeId();
 
-    if (sessionId != null) {
-        return ResponseEntity.ok("Logout successful");
+    // Login logic la map use panniruka, adhoda matching logic la remove panna try pannuvom
+    Map<String, String> sessionMap = deviceCredentialService.processDevices(request); // Match login logic
+
+    if (sessionMap.containsKey(neId)) {
+        sessionService.removeSession(neId, sessionMap.get(neId)); // Remove session
+        return ResponseEntity.ok("Logout successful for NeId: " + neId);
     } else {
         return ResponseEntity.badRequest().body("No active session found for this Ne ID");
     }
