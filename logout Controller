@@ -1,11 +1,10 @@
 @PostMapping("/logout")
 public ResponseEntity<String> logout(@RequestBody LogoutRequest request) {
-    String sessionId = sessionService.getSession(request.getNeId(), request.getIpAddress());
+    String sessionId = sessionService.getSession(request.getNeId());
 
     if (sessionId != null) {
-        // No need to remove session, just return success
         return ResponseEntity.ok("Logout successful");
     } else {
-        return ResponseEntity.badRequest().body("No active session found for this NeId and IP");
+        return ResponseEntity.badRequest().body("No active session found for this Ne ID");
     }
 }
