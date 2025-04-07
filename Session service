@@ -1,28 +1,33 @@
-package com.example.session1.service;
+package com.example.service;
 
-import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.dto.LoginRequest;
 import org.springframework.stereotype.Service;
-import com.example.session1.entity.SessionEntity;
-import com.example.session1.repository.SessionRepository;
+
+import java.util.*;
 
 @Service
 public class SessionService {
 
-    @Autowired
-    private SessionRepository sessionRepository;
+    private final Map<String, String> sessionStore = new HashMap<>();
 
-    public boolean login(String neId, String ipAddress, String username, String password) {
-        try {
-            String key = neId + "|" + ipAddress;
+    public boolean loginDevices(List<LoginRequest> devices) {
+        for (LoginRequest device : devices) {
+            String key = device.getNeId() + "_" + device.getIpAddress();
             String sessionId = UUID.randomUUID().toString();
-
-            SessionEntity session = new SessionEntity(key, sessionId, username, password);
-            sessionRepository.save(session);
-
-            return true;
-        } catch (Exception e) {
-            return false;
+            sessionStore.put(key, sessionId);
         }
+        return true;
+    }
+
+    public boolean logoutDevices(List<LoginRequest> devices) {
+        for (LoginRequest device : devices) {
+            String key = device.getNeId() + "_" + device.getIpAddress();
+            sessionStore.remove(key);
+        }
+        return true;
+    }
+
+    public Map<String, String> getAllSessions() {
+        return sessionStore;
     }
 }
