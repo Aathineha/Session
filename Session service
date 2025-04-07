@@ -1,18 +1,28 @@
-package com.example.sbi.service;
+package com.example.session1.service;
 
-import com.example.sbi.entity.SessionEntity;
-import com.example.sbi.repository.SessionRepository;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.example.session1.entity.SessionEntity;
+import com.example.session1.repository.SessionRepository;
 
 @Service
 public class SessionService {
 
     @Autowired
-    private SessionRepository repository;
+    private SessionRepository sessionRepository;
 
-    public void storeSession(String neId, String ipAddress, String sessionId) {
-        String key = neId + "|" + ipAddress;
-        repository.save(new SessionEntity(key, sessionId));
+    public boolean login(String neId, String ipAddress) {
+        try {
+            String key = neId + "|" + ipAddress;
+            String sessionId = UUID.randomUUID().toString();
+
+            SessionEntity session = new SessionEntity(key, sessionId);
+            sessionRepository.save(session);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
