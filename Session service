@@ -1,26 +1,18 @@
+package com.example.sbi.service;
+
+import com.example.sbi.entity.SessionEntity;
+import com.example.sbi.repository.SessionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
 public class SessionService {
-    private final static Map<String, String> sessionStore = new ConcurrentHashMap<>();
 
-    // Store session ID with neId and ipAddress
+    @Autowired
+    private SessionRepository repository;
+
     public void storeSession(String neId, String ipAddress, String sessionId) {
-        String key = neId + "_" + ipAddress;
-        sessionStore.put(key, sessionId);
-    }
-
-    // Get session by neId and ipAddress
-    public String getSession(String neId, String ipAddress) {
-        String key = neId + "_" + ipAddress;
-        return sessionStore.get(key);
-    }
-
-    // Remove session by neId and ipAddress
-    public void removeSession(String neId, String ipAddress) {
-        String key = neId + "_" + ipAddress;
-        sessionStore.remove(key);
-    }
-
-    // Optional: return full store
-    public Map<String, String> getSessionStore() {
-        return sessionStore;
+        String key = neId + "|" + ipAddress;
+        repository.save(new SessionEntity(key, sessionId));
     }
 }
