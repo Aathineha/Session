@@ -1,14 +1,16 @@
 @PostMapping("/logout")
-public ResponseEntity<String> logout(@RequestBody LogoutRequest request) {
-    String neId = request.getNeId();
+public ResponseEntity<String> logout(@RequestBody LogoutRequest[] requests) {
+    for (LogoutRequest request : requests) {
+        String neId = request.getNeId();
+        String ipAddress = request.getIpAddress();
 
-    // Directly check and remove session instead of calling processDevices()
-    String sessionId = sessionService.getSession(neId);
-
-    if (sessionId != null) {
-        sessionService.removeSession(neId);
-        return ResponseEntity.ok("Logout successful for NeId: " + neId);
-    } else {
-        return ResponseEntity.badRequest().body("No active session found for this Ne ID");
+        // Session map check and removal logic
+        if (sessionService.getSession(neId, ipAddress) != null) {
+            sessionService.removeSession(neId, ipAddress);
+        } else {
+            return ResponseEntity.badRequest().body("No active session for NeId: " + neId + " and IP: " + ipAddress);
+        }
     }
+
+    return ResponseEntity.ok("Logout successful for all devices");
 }
