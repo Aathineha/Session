@@ -12,12 +12,12 @@ public class SessionService {
     @Autowired
     private SessionRepository sessionRepository;
 
-    public boolean login(String neId, String ipAddress) {
+    public boolean login(String neId, String ipAddress, String username, String password) {
         try {
             String key = neId + "|" + ipAddress;
             String sessionId = UUID.randomUUID().toString();
 
-            SessionEntity session = new SessionEntity(key, sessionId);
+            SessionEntity session = new SessionEntity(key, sessionId, username, password);
             sessionRepository.save(session);
 
             return true;
