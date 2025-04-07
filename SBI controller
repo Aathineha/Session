@@ -1,36 +1,51 @@
-package com.example.session1.controller;
+package com.example.session.controller;
 
+import com.example.session.dto.LoginRequest;
+import com.example.session.dto.LogoutRequest;
+import com.example.session.entity.SessionEntity;
+import com.example.session.repository.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
-import com.example.session1.service.SessionService;
-import com.example.session1.service.LogoutService;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/session")
+@RequestMapping("/api/sbi")
 public class SessionController {
 
     @Autowired
-    private SessionService sessionService;
-
-    @Autowired
-    private LogoutService logoutService;
+    private SessionRepository sessionRepository;
 
     @PostMapping("/login")
-    public boolean login(@RequestBody Map<String, String> input) {
-        String neId = input.get("neId");
-        String ipAddress = input.get("ipAddress");
-        String username = input.get("username");
-        String password = input.get("password");
+    public boolean login(@RequestBody List<LoginRequest> requests) {
+        boolean loginSuccess = false;
 
-        return sessionService.login(neId, ipAddress, username, password);
+        for (LoginRequest request : requests) {
+            String sessionId = UUID.randomUUID().toString();
+            SessionEntity session = new SessionEntity(sessionId, request.getNeId(), request.getIpaddr());
+            sessionRepository.save(session);
+            loginSuccess = true;
+        }
+
+        return loginSuccess;
     }
 
     @PostMapping("/logout")
-    public boolean logout(@RequestBody Map<String, String> input) {
-        String neId = input.get("neId");
-        String ipAddress = input.get("ipAddress");
+    public boolean logout(@RequestBody List<LogoutRequest> requests) {
+        boolean logoutSuccess = false;
 
-        return logoutService.logout(neId, ipAddress);
+        for (LogoutRequest request : requests) {
+            Optional<SessionEntity> session =
+                sessionRepository.findByNeIdAndIpAddress(request.getNeId(), request.getIpaddr());
+
+            if (session.isPresent()) {
+                sessionRepository.delete(session.get());
+                logoutSuccess = true;
+            }
+        }
+
+        return logoutSuccess;
     }
 }
