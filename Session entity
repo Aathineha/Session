@@ -1,4 +1,4 @@
-package com.example.sbi.entity;
+package com.example.session1.entity;
 
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
@@ -8,6 +8,7 @@ public class SessionEntity {
 
     @PrimaryKey
     private String key; // neId|ipAddress
+
     private String sessionId;
 
     public SessionEntity() {}
@@ -18,4 +19,19 @@ public class SessionEntity {
     }
 
     // Getters and Setters
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 }
