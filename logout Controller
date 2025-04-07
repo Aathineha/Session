@@ -1,16 +1,24 @@
-@PostMapping("/logout")
+@PostMapping("/login")
+public String receiveDevices(@RequestBody DeviceDTO[] devices) {
+    for (DeviceDTO device : devices) {
+        String neId = device.getNeId();
+        String ipAddress = device.getIpAddress();
+        String sessionId = UUID.randomUUID().toString(); // generate session ID
+        sessionService.storeSession(neId, ipAddress, sessionId);
+    }
+    return "Login Successful";
+}@PostMapping("/logout")
 public ResponseEntity<String> logout(@RequestBody LogoutRequest[] requests) {
     for (LogoutRequest request : requests) {
         String neId = request.getNeId();
         String ipAddress = request.getIpAddress();
 
-        // Session map check and removal logic
-        if (sessionService.getSession(neId, ipAddress) != null) {
+        String sessionId = sessionService.getSession(neId, ipAddress);
+        if (sessionId != null) {
             sessionService.removeSession(neId, ipAddress);
         } else {
-            return ResponseEntity.badRequest().body("No active session for NeId: " + neId + " and IP: " + ipAddress);
+            return ResponseEntity.badRequest().body("No active session for NeID: " + neId);
         }
     }
-
     return ResponseEntity.ok("Logout successful for all devices");
 }
