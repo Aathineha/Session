@@ -1,24 +1,25 @@
-package com.example.session1.SessionService;
-
-import org.springframework.stereotype.Service;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
-
-@Service
 public class SessionService {
-    private final Map<String, String> sessionStore = new ConcurrentHashMap<>();
+    private final static Map<String, String> sessionStore = new ConcurrentHashMap<>();
 
-    // Store session ID for a given neId and IP address
-    public void storeSession(String neId, String sessionId) {
-        sessionStore.put(neId, sessionId);
+    // Store session ID with neId and ipAddress
+    public void storeSession(String neId, String ipAddress, String sessionId) {
+        String key = neId + "_" + ipAddress;
+        sessionStore.put(key, sessionId);
     }
 
-    // Get session ID for a given neId
-    public String getSession(String neId) {
-        return sessionStore.get(neId); // Returns session ID if exists, otherwise null
+    // Get session by neId and ipAddress
+    public String getSession(String neId, String ipAddress) {
+        String key = neId + "_" + ipAddress;
+        return sessionStore.get(key);
     }
 
-    // Return the whole session store (If needed for debugging)
+    // Remove session by neId and ipAddress
+    public void removeSession(String neId, String ipAddress) {
+        String key = neId + "_" + ipAddress;
+        sessionStore.remove(key);
+    }
+
+    // Optional: return full store
     public Map<String, String> getSessionStore() {
         return sessionStore;
     }
