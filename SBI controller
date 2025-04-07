@@ -1,29 +1,34 @@
+package com.example.controller;
+
+import com.example.dto.LoginRequest;
+import com.example.service.SessionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
-@RequestMapping("/device")
-public class SbiController {
+@RequestMapping("/session")
+public class SessionController {
 
     @Autowired
     private SessionService sessionService;
 
     @PostMapping("/login")
-    public ResponseEntity<Boolean> loginDevices(@RequestBody List<DeviceDTO> devices) {
-        for (DeviceDTO device : devices) {
-            String sessionId = UUID.randomUUID().toString();
-            sessionService.storeSession(device.getNeId(), device.getIpAddress(), sessionId);
-        }
-        return ResponseEntity.ok(true);
+    public ResponseEntity<Boolean> login(@RequestBody List<LoginRequest> devices) {
+        boolean success = sessionService.loginDevices(devices);
+        return ResponseEntity.ok(success);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Boolean> logoutDevices(@RequestBody List<LogoutRequest> logoutRequests) {
-        for (LogoutRequest request : logoutRequests) {
-            sessionService.removeSession(request.getNeId(), request.getIpAddress());
-        }
-        return ResponseEntity.ok(false); // false = logout
+    public ResponseEntity<Boolean> logout(@RequestBody List<LoginRequest> devices) {
+        boolean success = sessionService.logoutDevices(devices);
+        return ResponseEntity.ok(success);
     }
 
-    @GetMapping("/sessions")
-    public ResponseEntity<Map<String, String>> getAllSessions() {
+    @GetMapping("/all-sessions")
+    public ResponseEntity<?> getAllSessions() {
         return ResponseEntity.ok(sessionService.getAllSessions());
     }
 }
