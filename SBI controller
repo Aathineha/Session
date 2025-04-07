@@ -1,51 +1,29 @@
-package com.example.session.controller;
-
-import com.example.session.dto.LoginRequest;
-import com.example.session.dto.LogoutRequest;
-import com.example.session.entity.SessionEntity;
-import com.example.session.repository.SessionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 @RestController
-@RequestMapping("/api/sbi")
-public class SessionController {
+@RequestMapping("/device")
+public class SbiController {
 
     @Autowired
-    private SessionRepository sessionRepository;
+    private SessionService sessionService;
 
     @PostMapping("/login")
-    public boolean login(@RequestBody List<LoginRequest> requests) {
-        boolean loginSuccess = false;
-
-        for (LoginRequest request : requests) {
+    public ResponseEntity<Boolean> loginDevices(@RequestBody List<DeviceDTO> devices) {
+        for (DeviceDTO device : devices) {
             String sessionId = UUID.randomUUID().toString();
-            SessionEntity session = new SessionEntity(sessionId, request.getNeId(), request.getIpaddr());
-            sessionRepository.save(session);
-            loginSuccess = true;
+            sessionService.storeSession(device.getNeId(), device.getIpAddress(), sessionId);
         }
-
-        return loginSuccess;
+        return ResponseEntity.ok(true);
     }
 
     @PostMapping("/logout")
-    public boolean logout(@RequestBody List<LogoutRequest> requests) {
-        boolean logoutSuccess = false;
-
-        for (LogoutRequest request : requests) {
-            Optional<SessionEntity> session =
-                sessionRepository.findByNeIdAndIpAddress(request.getNeId(), request.getIpaddr());
-
-            if (session.isPresent()) {
-                sessionRepository.delete(session.get());
-                logoutSuccess = true;
-            }
+    public ResponseEntity<Boolean> logoutDevices(@RequestBody List<LogoutRequest> logoutRequests) {
+        for (LogoutRequest request : logoutRequests) {
+            sessionService.removeSession(request.getNeId(), request.getIpAddress());
         }
+        return ResponseEntity.ok(false); // false = logout
+    }
 
-        return logoutSuccess;
+    @GetMapping("/sessions")
+    public ResponseEntity<Map<String, String>> getAllSessions() {
+        return ResponseEntity.ok(sessionService.getAllSessions());
     }
 }
