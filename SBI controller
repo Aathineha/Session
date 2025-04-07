@@ -1,23 +1,36 @@
+package com.example.session1.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import java.util.Map;
+import com.example.session1.service.SessionService;
+import com.example.session1.service.LogoutService;
+
 @RestController
-@RequestMapping("/sbi")
-public class SbiController {
+@RequestMapping("/session")
+public class SessionController {
 
     @Autowired
-    private SessionService sessionService; // Service to store session data in Cassandra
+    private SessionService sessionService;
 
-    @PostMapping("/create-session")
-    public ResponseEntity<String> createSession(@RequestBody Map<String, String> request) {
-        String neId = request.get("neId");
+    @Autowired
+    private LogoutService logoutService;
 
-        // Generate unique session ID
-        String sessionId = UUID.randomUUID().toString();
+    @PostMapping("/login")
+    public boolean login(@RequestBody Map<String, String> input) {
+        String neId = input.get("neId");
+        String ipAddress = input.get("ipAddress");
+        String username = input.get("username");
+        String password = input.get("password");
 
-        // Store session in Cassandra
-        sessionService.storeSession(sessionId, neId);
+        return sessionService.login(neId, ipAddress, username, password);
+    }
 
-        // Log success
-        System.out.println("Login successful: Session ID = " + sessionId + ", Ne Id = " + neId);
+    @PostMapping("/logout")
+    public boolean logout(@RequestBody Map<String, String> input) {
+        String neId = input.get("neId");
+        String ipAddress = input.get("ipAddress");
 
-        return ResponseEntity.ok("Login successful");
+        return logoutService.logout(neId, ipAddress);
     }
 }
