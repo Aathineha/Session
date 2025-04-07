@@ -1,9 +1,9 @@
+package com.example.session.repository;
 
-package com.example.session.dto;
+import com.example.session.entity.SessionEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
-public class LogoutRequest {
-    private String neId;
-    private String ipaddr;
-
-    // Getters and Setters
+public interface SessionRepository extends JpaRepository<SessionEntity, Long> {
+    Optional<SessionEntity> findByNeIdAndIpAddress(String neId, String ipAddress);
 }
