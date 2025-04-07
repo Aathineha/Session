@@ -1,10 +1,24 @@
 @Service
 public class SessionService {
 
-    @Autowired
-    private SessionRepository sessionRepository;
+    private Map<String, String> sessionStore = new HashMap<>();
 
-    public void storeSession(String sessionId, String neId) {
-        sessionRepository.save(new SessionDTO(sessionId, neId));
+    public void storeSession(String neId, String ipAddress, String sessionId) {
+        String key = neId + "|" + ipAddress;
+        sessionStore.put(key, sessionId);
+    }
+
+    public String getSession(String neId, String ipAddress) {
+        String key = neId + "|" + ipAddress;
+        return sessionStore.get(key);
+    }
+
+    public boolean removeSession(String neId, String ipAddress) {
+        String key = neId + "|" + ipAddress;
+        return sessionStore.remove(key) != null;
+    }
+
+    public Map<String, String> getAllSessions() {
+        return sessionStore;
     }
 }
