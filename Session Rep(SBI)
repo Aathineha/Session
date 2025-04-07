@@ -1,3 +1,6 @@
-@Repository
-public interface SessionRepository extends CassandraRepository<SessionDTO, String> {
-}
+package com.example.sbi.repository;
+
+import org.springframework.data.cassandra.repository.CassandraRepository;
+import com.example.sbi.entity.SessionEntity;
+
+public interface SessionRepository extends CassandraRepository<SessionEntity, String> {}
