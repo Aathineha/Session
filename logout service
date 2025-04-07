@@ -1,17 +1,22 @@
-package com.example.sbi.service;
+package com.example.session1.service;
 
-import com.example.sbi.model.LogoutRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import com.example.session1.repository.SessionRepository;
 
 @Service
 public class LogoutService {
 
-    public String logoutDevices(List<LogoutRequest> requests) {
-        for (LogoutRequest request : requests) {
-            System.out.println("Logout: " + request.getNeId() + " | " + request.getIpAddress());
+    @Autowired
+    private SessionRepository sessionRepository;
+
+    public boolean logout(String neId, String ipAddress) {
+        String key = neId + "|" + ipAddress;
+
+        if (sessionRepository.existsById(key)) {
+            sessionRepository.deleteById(key);
+            return true;
         }
-        return "Logout successful";
+        return false;
     }
 }
