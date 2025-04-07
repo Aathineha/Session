@@ -1,6 +1,9 @@
-package com.example.sbi.repository;
+package com.example.session1.repository;
 
 import org.springframework.data.cassandra.repository.CassandraRepository;
-import com.example.sbi.entity.SessionEntity;
+import org.springframework.stereotype.Repository;
+import com.example.session1.entity.SessionEntity;
 
-public interface SessionRepository extends CassandraRepository<SessionEntity, String> {}
+@Repository
+public interface SessionRepository extends CassandraRepository<SessionEntity, String> {
+}
