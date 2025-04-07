@@ -1,21 +1,31 @@
 package com.example.sbi.controller;
 
-import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.example.sbi.service.DeviceCredentialService;
 import com.example.sbi.model.DeviceDTO;
-import java.util.Map;
+import com.example.sbi.model.LogoutRequest;
+import com.example.sbi.service.DeviceCredentialService;
+import com.example.sbi.service.LogoutService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/sbi")
-public class DeviceCredentialController {
+@RequestMapping("/sbi")
+public class SbiController {
 
     @Autowired
     private DeviceCredentialService deviceCredentialService;
 
-    @PostMapping("/devices")
-    public String receiveDevices(@RequestBody DeviceDTO[] devices) {
-        Map<String, String> sessionMap = deviceCredentialService.processDevices(devices);
-        return "Login Successful";
+    @Autowired
+    private LogoutService logoutService;
+
+    @PostMapping("/login")
+    public String loginDevices(@RequestBody List<DeviceDTO> devices) {
+        return deviceCredentialService.loginAllDevices(devices);
+    }
+
+    @PostMapping("/logout")
+    public String logoutDevices(@RequestBody List<LogoutRequest> logoutRequests) {
+        return logoutService.logoutDevices(logoutRequests);
     }
 }
